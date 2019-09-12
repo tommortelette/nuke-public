@@ -1,59 +1,41 @@
-import nuke
+import os.path
 import PySide2
+import nuke
 import nukescripts
+
 
 app = PySide2.QtWidgets.QApplication.instance()
 busy_cursor = PySide2.QtGui.QCursor(PySide2.QtCore.Qt.WaitCursor)
 
+
 def makeAOVPaths(aov_type):
-    pass_list = nuke.getFileNameList(render_dir)
-    arnold_lighting_aovs = ['diffuse_direct', 'diffuse_indirect', 'specular_direct', 'specular_indirect', 'emission', 'transmission', 'sss', 'coat']
+    pass_list = nuke.getFileNameList(_render_dir)
+    arnold_lighting_aovs = ['diffuse_direct', 'diffuse_indirect', 'specular_direct', 'specular_indirect',
+                            'emission', 'transmission', 'sss', 'coat']
     arnold_utility_aovs = ['N', 'P', 'Z', 'shadow_matte', 'shadow', 'motionVector']
     arnold_crypto_aovs = ['crypto_asset', 'crypto_material', 'crypto_object']
-    lighting_paths = []
-    utility_paths = []
-    crypto_paths = []
-    beauty_path = ''
-    lightgroups_paths = []
+    arnold_lightgroups_aovs = ['emission', 'transmission', 'RGBA_']
+    aov_groups = {
+        'lighting':arnold_lighting_aovs,
+        'lightgroups':arnold_lightgroups_aovs,
+        'utility':arnold_utility_aovs,
+        'crypto':arnold_crypto_aovs
+        }
+    aov_paths = []
 
-    if aov_type == 'lighting':
-        for aov in arnold_lighting_aovs:
-            this_pass = [p for p in pass_list if aov in p]
-            if this_pass != []:
-                lighting_paths.append(str(this_pass[0]))
-        return lighting_paths
-
-
-    elif aov_type == 'utility':
-        for aov in arnold_utility_aovs:
-            this_pass = [p for p in pass_list if aov in p]
-            if this_pass != []:
-                utility_paths.append(str(this_pass[0]))
-        return utility_paths
-
-    elif aov_type == 'crypto':
-        for aov in arnold_crypto_aovs:
-            this_pass = [p for p in pass_list if aov in p]
-            if this_pass != []:
-                crypto_paths.append(str(this_pass[0]))
-        return crypto_paths
-
-    elif aov_type == 'beauty':
+    if aov_type == 'beauty':
         for p in pass_list:
             if 'beauty' in p:
-                beauty_path = p
+                aov_paths = [p]
                 break
-        return beauty_path
-
-    elif aov_type == 'lightgroups':
-        for p in pass_list:
-            if 'RGBA' in p:
-                lightgroups_paths.append(p)
-        return lightgroups_paths
-
+        return aov_paths
+    #search for aov name in sequence path and add it to path list
+    if aov_type in aov_groups.keys():
+        for aov in aov_groups[aov_type]:
+            aov_paths.extend([p for p in pass_list if aov in p])
+        return aov_paths
     else:
         return None
-
 
 
 def deSelectAll():
@@ -61,98 +43,125 @@ def deSelectAll():
         for n in nuke.selectedNodes():
             n['selected'].setValue(False)
 
-x_offset = 0
-
-def setOffset(node):
-    global x_offset
-    node.setXpos(node.xpos() + x_offset )
-    x_offset =+ 110
 
 def makeBackdrop(label):
     backdrop = nukescripts.autobackdrop.autoBackdrop()
     backdrop['label'].setValue(label)
-    backdrop.setYpos(backdrop.ypos())
-    backdrop['bdheight'].setValue(backdrop['bdheight'].getValue() + 100)
+    backdrop['bdheight'].setValue(backdrop['bdheight'].value() + 110)
+    if label == 'Utility' or label == 'Cryptomatte':
+        backdrop['bdwidth'].setValue(backdrop['bdwidth'].value() + 110)
     deSelectAll()
 
 
 def buildTemplate():
-    global render_dir 
-    render_dir = nuke.getClipname('Select Render folder', '*.exr')
-    if render_dir:
-        try:
-            app.setOverrideCursor(busy_cursor)
-            deSelectAll()
-            if makeAOVPaths('beauty'):
-                beauty_read = nuke.nodes.Read()
-                beauty_read['file'].fromUserText(render_dir + makeAOVPaths('beauty'))
-                beauty_read.setSelected(True)
-                setOffset(beauty_read)
-                makeBackdrop('Beauty')
-
-
-            lighting_nodes = []
-            lighting_nodes_xpos = []
-            lighting_nodes_ypos = []
-
-            if makeAOVPaths('lighting'):
-                for filepath in makeAOVPaths('lighting'):
-                    read = nuke.nodes.Read()
-                    read['file'].fromUserText(render_dir + filepath)
-                    setOffset(read)
-                    read.setSelected(True)
-                    lighting_nodes.append(read)
-                    lighting_nodes_xpos.append(read.xpos())
-                    lighting_nodes_ypos.append(read.ypos())
-                if len(lighting_nodes) >= 1:
-                    lighting_nodes_xcenter = sum(lighting_nodes_xpos) / len(lighting_nodes)
-                    lighting_nodes_ycenter = sum(lighting_nodes_ypos) / len(lighting_nodes)
-                    lighting_merge = nuke.nodes.Merge2(operation = 'plus', selected = True, inputs = lighting_nodes, xpos = lighting_nodes_xcenter, ypos = lighting_nodes_ycenter + 500)
-                    makeBackdrop('Lighting AOVs')
-
-
-
-            lightgroups_nodes = []
-            lightgroups_nodes_xpos = []
-            lightgroups_nodes_ypos = []
-            
-            if makeAOVPaths('lightgroups'):
-                for filepath in makeAOVPaths('lightgroups'):
-                    read = nuke.nodes.Read()
-                    read['file'].fromUserText(render_dir + filepath)
-                    setOffset(read)
-                    read.setSelected(True)
-                    lightgroups_nodes.append(read)
-                    lightgroups_nodes_xpos.append(read.xpos())
-                    lightgroups_nodes_ypos.append(read.ypos())
-                if len(lightgroups_nodes)>=1:
-                    lightgroups_nodes_xcenter = sum(lightgroups_nodes_xpos) / len(lightgroups_nodes)
-                    lightgroups_nodes_ycenter = sum(lightgroups_nodes_ypos) / len(lightgroups_nodes)
-                    lightgroups_merge = nuke.nodes.Merge2(operation = 'plus', selected= True, inputs = lightgroups_nodes, xpos = lightgroups_nodes_xcenter, ypos = lightgroups_nodes_ycenter + 500)
-                makeBackdrop('Lightgroups')
-
-            
-            if makeAOVPaths('utility'):
-                for filepath in makeAOVPaths('utility'):
-                    read = nuke.nodes.Read()
-                    read['file'].fromUserText(render_dir + filepath)
-                    setOffset(read)
-                    read.setSelected(True)
-                makeBackdrop('Utility')
-
-            if makeAOVPaths('crypto'):
-                for filepath in makeAOVPaths('crypto'):
-                    read = nuke.nodes.Read()
-                    read['file'].fromUserText(render_dir + filepath)
-                    setOffset(read)
-                    read.setSelected(True)
-                makeBackdrop('Cryptomatte')
-
-
-            switch_inputs = [beauty_read, lighting_merge, lightgroups_merge]
-            switch = nuke.nodes.Switch(inputs = switch_inputs, xpos = lighting_merge.xpos(), ypos = lighting_merge.ypos() + 500, label = '[if {[numvalue this.which] == 0} {return "BEAUTY"}\nif {[numvalue this.which] == 1} {return "AOVs"}\nif {[numvalue this.which] == 2} {return Lightgroups}] ')
-            app.restoreOverrideCursor()
-        except:
-            app.restoreOverrideCursor()
+    global _render_dir 
+    global _x_offset
+    try:
+        _render_dir = os.path.dirname(nuke.getClipname('Select Render folder or file', '*.exr')) + '/'
+    except Exception as e:
+        print('Error: {0}'.format(e))
     else:
-        return
+        app.setOverrideCursor(busy_cursor)
+        deSelectAll()
+
+        #start by making the beauty, which should be there if it is the only file
+        if makeAOVPaths('beauty'):
+            beauty_read = nuke.nodes.Read()
+            beauty_read['file'].fromUserText(_render_dir + makeAOVPaths('beauty')[0])
+            beauty_read.setSelected(True)
+            x_offset = beauty_read.xpos()
+            makeBackdrop('Beauty')
+
+        #create nodes for lighting aovs
+        lighting_nodes = []
+        if makeAOVPaths('lighting'):
+            for filepath in makeAOVPaths('lighting'):
+                read = nuke.nodes.Read()
+                read['file'].fromUserText(_render_dir + filepath)
+                read.setXpos(read.xpos() + 110)
+                read.setSelected(True)
+                lighting_nodes.append(read)
+            if len(lighting_nodes) >= 1:
+                #calculate average position of nodes to place the merge in the center
+                avgxpos = sum([n.xpos() for n in lighting_nodes])/len(lighting_nodes)
+                avgypos = sum([n.ypos() for n in lighting_nodes])/len(lighting_nodes)
+                #create merge
+                lighting_merge = nuke.nodes.Merge2(
+                    operation = 'plus',
+                    output = 'rgb',
+                    selected = True,
+                    xpos = avgxpos,
+                    ypos = avgypos + 400)
+                #set read nodes as merge inputs, with hack to avoid connecting mask input (#2)
+                i = 0
+                for input in lighting_nodes:
+                    if i == 2:
+                        i += 1
+                    lighting_merge.setInput(i, input)
+                    i += 1
+                makeBackdrop('Lighting AOVs')
+            else:
+                lighting_merge = lighting_nodes #if only one lighting node connect to the switch anyway
+
+        #same thing for lightgroups
+        lightgroups_nodes = []
+        if makeAOVPaths('lightgroups'):
+            for filepath in makeAOVPaths('lightgroups'):
+                read = nuke.nodes.Read()
+                read['file'].fromUserText(_render_dir + filepath)
+                read.setXpos(read.xpos() + 110)
+                read.setSelected(True)
+                lightgroups_nodes.append(read)
+            if len(lightgroups_nodes) >= 1:
+                avgxpos = sum([n.xpos() for n in lightgroups_nodes])/len(lightgroups_nodes)
+                avgypos = sum([n.ypos() for n in lightgroups_nodes])/len(lightgroups_nodes)
+                lightgroups_merge = nuke.nodes.Merge2(
+                    operation = 'plus',
+                    output = 'rgb',
+                    selected = True,
+                    xpos = avgxpos,
+                    ypos = avgypos + 400)
+                i = 0
+                for input in lightgroups_nodes:
+                    if i == 2:
+                        i += 1
+                    lightgroups_merge.setInput(i, input)
+                    i += 1
+                makeBackdrop('Lightgroups')
+            else:
+                lightgroups_merge = lightgroups_nodes
+
+        #same for utility passes
+        if makeAOVPaths('utility'):
+            _x_offset = 220
+            for filepath in makeAOVPaths('utility'):
+                read = nuke.nodes.Read()
+                read['file'].fromUserText(_render_dir + filepath)
+                read.setXpos(beauty_read.xpos() + _x_offset)
+                _x_offset += 220
+                read.setYpos(read.ypos() - 500) #put utility above main passes, as in the current template
+                read.setSelected(True)
+            makeBackdrop('Utility')
+
+        #same for cryptomatte
+        if makeAOVPaths('crypto'):
+            if not makeAOVPaths('utility'):
+                _x_offset = 220
+            for filepath in makeAOVPaths('crypto'):
+                read = nuke.nodes.Read()
+                read['file'].fromUserText(_render_dir + filepath)
+                read.setXpos(beauty_read.xpos() + _x_offset)
+                _x_offset += 220
+                read.setYpos(read.ypos() - 500) #put crypto above main passes, as in the current template
+                read.setSelected(True)
+            makeBackdrop('Cryptomatte')
+
+        #add a switch connected to merge nodes and beauty to compare
+        switch = nuke.nodes.Switch(
+            inputs = [beauty_read, lighting_merge, lightgroups_merge], 
+            xpos = lighting_merge.xpos(), 
+            ypos = lighting_merge.ypos() + 400, 
+            label = '[if {[numvalue this.which] == 0} {return "BEAUTY"}\nif {[numvalue this.which] == 1} {return "AOVs"}\nif {[numvalue this.which] == 2} {return Lightgroups}]'
+            )
+        
+        app.restoreOverrideCursor()

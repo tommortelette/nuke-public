@@ -3,6 +3,23 @@ import PySide2
 import nuke
 import nukescripts
 
+#Made by Tom Mortelette
+#September 2019
+
+#This tool creates a template that compates the beauty recreated by
+#combining aovs as well as lightgroups against the original beauty pass
+#All aov file sequences must be in the same folder
+#This currenty supports renders using Arnold's naming convention
+
+'''
+To install add this to your menu.py : 
+
+import passbuilder
+TMmenu = nuke.menu('Nuke').addMenu('TM Tools')
+TMmenu.addCommand('Build Arnold QC Template', 'passbuilder.buildTemplate()')
+
+'''
+
 
 app = PySide2.QtWidgets.QApplication.instance()
 busy_cursor = PySide2.QtGui.QCursor(PySide2.QtCore.Qt.WaitCursor)

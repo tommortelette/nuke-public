@@ -1,0 +1,58 @@
+set cut_paste_input [stack 0]
+version 11.2 v5
+push $cut_paste_input
+Gizmo {
+ name TM_MatteSelect
+ help http://intranet/depts/Compositing:Nuke:Gizmos:MatteSelect_FS
+ tile_color 0xf4cb1fff
+ selected true
+ xpos 400
+ ypos 2127
+ addUserKnob {20 rotoSelect l matteSelect}
+ addUserKnob {6 redCh l "red channel" +STARTLINE}
+ redCh true
+ addUserKnob {6 greenCh l "green channel" +STARTLINE}
+ greenCh true
+ addUserKnob {6 blueCh l "blue channel" +STARTLINE}
+ blueCh true
+ addUserKnob {26 divider l "" +STARTLINE}
+ addUserKnob {26 text_version l "" +STARTLINE T "<font color=#808080 size=\"5\" >v1.0</font>"}
+ addUserKnob {26 text_author l "" +STARTLINE T "<font color=#808080 size=\"2\">Matte Select © 2019 Tom Mortelette</font>"}
+}
+ Input {
+  inputs 0
+  name InputMatte
+  xpos 510
+  ypos 1143
+ }
+ Expression {
+  temp_name0 R
+  temp_expr0 "redCh == 1 ? r : 0"
+  temp_name1 G
+  temp_expr1 "greenCh == 1 ? g : 0"
+  temp_name2 B
+  temp_expr2 "blueCh == 1 ? b : 0"
+  temp_name3 maxRG
+  temp_expr3 max(R,G,B)
+  channel0 rgb
+  expr0 0
+  channel1 alpha
+  expr1 maxRG
+  channel2 {-rgba.red -rgba.green -rgba.blue none}
+  channel3 {none none none -rgba.alpha}
+  name Expression1
+  selected true
+  xpos 510
+  ypos 1191
+ }
+ Clamp {
+  name Clamp2
+  xpos 510
+  ypos 1233
+ }
+ Output {
+  name Output1
+  xpos 510
+  ypos 1311
+ }
+end_group

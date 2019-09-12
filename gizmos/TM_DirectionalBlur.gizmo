@@ -1,0 +1,203 @@
+set cut_paste_input [stack 0]
+version 11.2 v5
+push $cut_paste_input
+Group {
+name TM_DirectionalBlur
+help "Blurs the image in one direction without shifting pixels like the original DirBlur node. Can also be used to blur mattes using the output mask option."
+tile_color 0xcc804eff
+selected true
+xpos 144
+ypos 2217
+addUserKnob {20 User l DirectionalBlur}
+addUserKnob {41 channels T Blur1.channels}
+addUserKnob {7 size R 0 100}
+addUserKnob {7 angle R -180 180}
+addUserKnob {6 mask l "use mask" t "only blurs within the input mask" +STARTLINE}
+addUserKnob {6 invertmask l invert -STARTLINE}
+addUserKnob {6 outputmask l "output mask" t "outputs the blurred mask input in the alpha channel" +STARTLINE}
+outputmask true
+addUserKnob {26 ""}
+addUserKnob {16 mix}
+mix 1
+addUserKnob {41 crop l "crop to format" T Blur1.crop}
+addUserKnob {26 ""}
+addUserKnob {26 text_version l "" +STARTLINE T "<font color=#808080 size=\"5\" >v0.13 beta</font>"}
+addUserKnob {26 text_author l "" +STARTLINE T "<font color=#808080 size=\"2\">Directional Blur © 2019 by Tom Mortelette with help from Attila Gaspartez</font>"}
+}
+Input {
+inputs 0
+name Input
+xpos 70
+ypos 39
+}
+set N82a3cb0 [stack 0]
+Dot {
+name Dot5
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 214
+ypos 42
+}
+Dot {
+name Dot7
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 214
+ypos 498
+}
+set N870b560 [stack 0]
+Dot {
+name Dot3
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 214
+ypos 570
+}
+Input {
+inputs 0
+name mask
+xpos -260
+ypos 39
+number 1
+}
+Constant {
+inputs 0
+channels alpha
+name Constant1
+xpos -370
+ypos 58
+}
+Switch {
+inputs 2
+which {{"\[exists parent.input1]"}}
+name Switch1
+xpos -260
+ypos 87
+}
+push $N82a3cb0
+Dot {
+name Dot2
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos -116
+ypos 42
+}
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+name Copy1
+xpos -150
+ypos 81
+disable {{!parent.mask x1001 0}}
+}
+Transform {
+rotate {{parent.angle}}
+center {{width/2} {height/2}}
+name Transform29
+xpos -150
+ypos 135
+}
+Blur {
+size {0 {parent.size}}
+name Blur1
+xpos -150
+ypos 177
+}
+Transform {
+rotate {{-parent.angle}}
+center {{width/2} {height/2}}
+name Transform30
+xpos -150
+ypos 231
+}
+Crop {
+box {0 0 {width} {height}}
+name CropToFormat
+xpos -150
+ypos 279
+disable {{!parent.Blur1.crop}}
+}
+Dot {
+name Dot1
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos -116
+ypos 330
+}
+set N17a08e40 [stack 0]
+Dot {
+name Dot6
+note_font "Bitstream Vera Sans Bold Bold Bold"
+note_font_size 21
+xpos -116
+ypos 378
+}
+set N174019e0 [stack 0]
+push $N17a08e40
+Invert {
+channels alpha
+name Invert1
+xpos -40
+ypos 321
+disable {{!parent.invertmask}}
+}
+push $N82a3cb0
+Remove {
+channels alpha
+name Remove1
+xpos 70
+ypos 153
+}
+AddMix {
+inputs 2
+name AddMix1
+xpos 70
+ypos 327
+}
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+name Copy3
+xpos 70
+ypos 369
+}
+push $N174019e0
+Dot {
+name Dot4
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos -116
+ypos 450
+}
+Switch {
+inputs 2
+which {{parent.mask}}
+name use_mask
+xpos 70
+ypos 447
+}
+push $N870b560
+Dissolve {
+inputs 2
+which {{parent.mix}}
+name Mix
+xpos 70
+ypos 489
+}
+Copy {
+inputs 2
+from0 rgba.alpha
+to0 rgba.alpha
+name Copy2
+xpos 70
+ypos 561
+disable {{parent.outputmask}}
+}
+Output {
+name Output
+xpos 70
+ypos 639
+}
+end_group

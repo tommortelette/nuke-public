@@ -195,4 +195,29 @@ def buildTemplate():
         app.restoreOverrideCursor()
 
 
+def updateTemplate():
+    #thisNode = nuke.thisNode()
+    #nuke.root().begin()
+    if nuke.selectedNodes():
+        for sel_node in nuke.selectedNodes():
+            if sel_node.Class()=='Read':
+                oldpass = sel_node['file'].getValue().split('_')[-2]
+                nuke.root().end()
+                new_path = thisNode['new_path'].getValue()
+                pass_list = nuke.getFileNameList(new_path)
+                thisknob = nuke.thisKnob().name()
+                if thisknob == 'custom':
+                    pass_name = thisNode.knob('pass_name').getValue()
+                else:
+                    pass_name = thisknob
+                our_pass = [s for s in pass_list if pass_name in s]
+                
+                if our_pass == []:
+                    nuke.message('Pass not found !')
+                else:
+                    sel_node['file'].fromUserText(new_path + str(our_pass[0]))
+            elif sel_node:
+                if sel_node.name() == thisNode.name():
+                    nuke.message('Don\'t select this node !')
+            else:
                 nuke.message("Select a node first.")

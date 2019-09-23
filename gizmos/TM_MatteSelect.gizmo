@@ -1,13 +1,8 @@
-set cut_paste_input [stack 0]
+#! /Volumes/software/nuke/Nuke11.2v5/libnuke-11.2.5.so -nx
 version 11.2 v5
-push $cut_paste_input
 Gizmo {
- name TM_MatteSelect
  help "Shuffles mattes from red green and blue channels into alpha"
  tile_color 0xf4cb1fff
- selected true
- xpos 400
- ypos 2127
  addUserKnob {20 rotoSelect l matteSelect}
  addUserKnob {6 redCh l "red channel" +STARTLINE}
  redCh true

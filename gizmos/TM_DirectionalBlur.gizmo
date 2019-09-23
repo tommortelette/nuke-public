@@ -70,7 +70,7 @@ set Na63c030 [stack 0]
  Transform {
   rotate {{parent.angle}}
   center {{width/2} {height/2}}
-  name Transform29
+  name Transform1
   xpos -150
   ypos 183
  }
@@ -83,7 +83,7 @@ set Na63c030 [stack 0]
  Transform {
   rotate {{-parent.angle}}
   center {{width/2} {height/2}}
-  name Transform30
+  name Transform2
   xpos -150
   ypos 279
  }

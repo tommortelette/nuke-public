@@ -3,7 +3,7 @@ version 11.2 v5
 push $cut_paste_input
 Gizmo {
  name TM_MatteSelect
- help http://intranet/depts/Compositing:Nuke:Gizmos:MatteSelect_FS
+ help "Shuffles mattes from red green and blue channels into alpha"
  tile_color 0xf4cb1fff
  selected true
  xpos 400

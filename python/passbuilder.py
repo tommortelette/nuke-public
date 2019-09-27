@@ -1,7 +1,7 @@
 import os.path
 import PySide2
 import nuke
-import nukescripts
+import nukescripts.autobackdrop as abd
 
 #Made by Tom Mortelette
 #September 2019
@@ -68,7 +68,7 @@ def makeBackdrop(label):
     global createdNodes
     for n in nuke.selectedNodes():
         createdNodes.append(n)
-    backdrop = nukescripts.autobackdrop.autoBackdrop()
+    backdrop = abd. kdrop()
     backdrop['label'].setValue(label)
     backdrop['bdheight'].setValue(backdrop['bdheight'].value() + 110)
     if label == 'Utility' or label == 'Cryptomatte':

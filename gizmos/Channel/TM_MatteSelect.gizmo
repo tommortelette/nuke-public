@@ -1,42 +1,42 @@
 Gizmo {
 tile_color 0xf4cb1fff
-addUserKnob {20 matteSelect}
-addUserKnob {6 outa l "output alpha" +STARTLINE}
-outa true
-addUserKnob {6 outrgb l "output RGB" -STARTLINE}
-outrgb true
-addUserKnob {26 L01 l "L01 (rgb)"}
-addUserKnob {6 r1 l red -STARTLINE}
+addUserKnob {20 matteSelect l MatteSelect}
+addUserKnob {1 output l "" +STARTLINE +INVISIBLE}
+output "\[if \{\[value outa] && \[value outrgb]\} \{return \"\\rrgba\"\} elseif \{\[value outa]\} \{return \"alpha\"\} elseif \{\[value outrgb]\} \{return \"\\rrgb\"\} else \{return \"no output\"\}]"
+addUserKnob {26 L01 l "RGB (L01)"}
+addUserKnob {6 r1 l red +STARTLINE}
 r1 true
-addUserKnob {6 g1 l green -STARTLINE}
+addUserKnob {6 g1 l green +STARTLINE}
 g1 true
-addUserKnob {6 b1 l blue -STARTLINE}
+addUserKnob {6 b1 l blue +STARTLINE}
 b1 true
-addUserKnob {6 a1 l alpha -STARTLINE +INVISIBLE}
-addUserKnob {20 additional l "additional layers" n 1}
-additional 0
-addUserKnob {22 enableAdditionalLayers l "enable all" T "n=nuke.thisNode()\nknobs = \['r2', 'g2', 'b2', 'r3', 'g3', 'b3', 'r4', 'g4', 'b4']\nfor k in knobs:\n    n\[k].setValue(1)" +STARTLINE}
-addUserKnob {22 disableAdditionaLayers l "disable all" -STARTLINE T "n=nuke.thisNode()\nknobs = \['r2', 'g2', 'b2', 'r3', 'g3', 'b3', 'r4', 'g4', 'b4']\nfor k in knobs:\n    n\[k].setValue(0)"}
-addUserKnob {26 L02}
-addUserKnob {6 r2 l red -STARTLINE}
-addUserKnob {6 g2 l green -STARTLINE}
-addUserKnob {6 b2 l blue -STARTLINE}
-addUserKnob {6 a2 -STARTLINE +INVISIBLE}
-addUserKnob {26 L03}
-addUserKnob {6 r3 l red -STARTLINE}
-addUserKnob {6 g3 l green -STARTLINE}
-addUserKnob {6 b3 l blue -STARTLINE}
-addUserKnob {6 a3 l alpha -STARTLINE +INVISIBLE}
-addUserKnob {26 L04}
-addUserKnob {6 r4 l red -STARTLINE}
-addUserKnob {6 g4 l green -STARTLINE}
-addUserKnob {6 b4 l blue -STARTLINE}
-addUserKnob {6 a4 l alpha -STARTLINE +INVISIBLE}
-addUserKnob {20 endGroup n -1}
+addUserKnob {6 a1 l alpha +INVISIBLE +STARTLINE}
+addUserKnob {26 output_ l output}
+addUserKnob {6 outa l matte +STARTLINE}
+outa true
+addUserKnob {6 outrgb l rgb +STARTLINE}
 addUserKnob {26 ""}
 addUserKnob {22 wiki_roto l "Roto workflow" t "Have a look at the Roto Workflow on Union`s Wiki page. " T "import os\nimport sys\n\ntry:\n    import subprocess\n    def _run(cmd, shell, wait):\n        opener = subprocess.Popen(cmd, shell=shell)\n        if wait:\n            opener.wait()\n        return opener.pid\nexcept ImportError:\n    import popen2\n    def _run(cmd, shell, wait):\n        opener = popen2.Popen3(cmd)\n        if wait:\n            opener.wait()\n        return opener.pid\n\ndef _open(url, wait=0):\n    if sys.platform == \"darwin\":\n        cmd = \[\"open\", url]\n    elif hasattr(os, \"startfile\"):\n        return os.startfile(url)\n    elif os.environ.has_key(\"KDE_FULL_SESSION\") or os.environ.has_key(\"KDE_MULTIHEAD\") or \\\n        os.environ.has_key(\"GNOME_DESKTOP_SESSION_ID\") or os.environ.has_key(\"GNOME_KEYRING_SOCKET\"):\n        cmd = \[\"xdg-open\", url]\n    else:\n        raise OSError, \"Desktop not supported.\"\n\n    return _run(cmd, 0, wait)\n\n_open('https://sites.google.com/a/unionvfx.com/wiki/home/2d/roto/roto-workflow-wip')\n" +STARTLINE}
-addUserKnob {26 text_version l "" +STARTLINE T "<font color=#808080 size=\"5\" >v1.2</font>"}
+addUserKnob {26 text_version l "" +STARTLINE T "<font color=#808080 size=\"5\" >v1.3</font>"}
 addUserKnob {26 text_author l "" +STARTLINE T "<font color=#808080 size=\"2\">Matte Select &copy; 2019 Tom Mortelette</font>"}
+addUserKnob {20 layers l "Extra Layers"}
+addUserKnob {22 enableall l "enable all" T "n=nuke.thisNode()\nknobs = \['r2', 'g2', 'b2', 'r3', 'g3', 'b3', 'r4', 'g4', 'b4']\nfor k in knobs:\n    n\[k].setValue(1)" +STARTLINE}
+addUserKnob {22 disableall l "disable all" -STARTLINE T "n=nuke.thisNode()\nknobs = \['r2', 'g2', 'b2', 'r3', 'g3', 'b3', 'r4', 'g4', 'b4']\nfor k in knobs:\n    n\[k].setValue(0)"}
+addUserKnob {26 L02}
+addUserKnob {6 r2 l red -STARTLINE}
+addUserKnob {6 g2 l green +STARTLINE}
+addUserKnob {6 b2 l blue +STARTLINE}
+addUserKnob {6 a2 l alpha +INVISIBLE +STARTLINE}
+addUserKnob {26 L03}
+addUserKnob {6 r3 l red +STARTLINE}
+addUserKnob {6 g3 l green +STARTLINE}
+addUserKnob {6 b3 l blue +STARTLINE}
+addUserKnob {6 a3 l alpha +INVISIBLE +STARTLINE}
+addUserKnob {26 L04}
+addUserKnob {6 r4 l red +STARTLINE}
+addUserKnob {6 g4 l green +STARTLINE}
+addUserKnob {6 b4 l blue +STARTLINE}
+addUserKnob {6 a4 l alpha +INVISIBLE +STARTLINE}
 }
 Input {
 inputs 0
@@ -44,26 +44,26 @@ name Inputmatte
 xpos 400
 ypos 1095
 }
-set N168d0f20 [stack 0]
+set N1ec10160 [stack 0]
 Dot {
 name Dot3
-note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font "Bitstream Vera Sans"
 note_font_size 21
 xpos 544
 ypos 1098
 }
-set N183323b0 [stack 0]
+set N1ec14580 [stack 0]
 Dot {
 name Dot2
-note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font "Bitstream Vera Sans"
 note_font_size 21
 xpos 654
 ypos 1098
 }
-set N1b6f9e00 [stack 0]
+set N1ec19440 [stack 0]
 Dot {
 name Dot1
-note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font "Bitstream Vera Sans"
 note_font_size 21
 xpos 764
 ypos 1098
@@ -95,12 +95,12 @@ ypos 1191
 }
 Dot {
 name Dot4
-note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font "Bitstream Vera Sans"
 note_font_size 21
 xpos 764
 ypos 1338
 }
-push $N1b6f9e00
+push $N1ec19440
 Shuffle {
 in L03
 name Shuffle2
@@ -128,12 +128,12 @@ ypos 1191
 }
 Dot {
 name Dot5
-note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font "Bitstream Vera Sans"
 note_font_size 21
 xpos 654
 ypos 1290
 }
-push $N183323b0
+push $N1ec14580
 Shuffle {
 in L02
 name Shuffle1
@@ -161,12 +161,12 @@ ypos 1191
 }
 Dot {
 name Dot6
-note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font "Bitstream Vera Sans"
 note_font_size 21
 xpos 544
 ypos 1242
 }
-push $N168d0f20
+push $N1ec10160
 Expression {
 temp_name0 R
 temp_expr0 "r1 ? r : 0"
@@ -208,7 +208,7 @@ ypos 1335
 }
 Remove {
 operation keep
-channels rgba
+channels alpha
 name Remove1
 xpos 400
 ypos 1383

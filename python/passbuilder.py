@@ -1,24 +1,28 @@
-import os.path
-import PySide2
-import nuke
-import nukescripts.autobackdrop as abd
 
-#Made by Tom Mortelette
-#September 2019
+__author__ = 'Tom Mortelette'
+__description__ = 'AOV template builder'
+
 
 #This tool creates a template that compares the beauty recreated by
 #combining aovs as well as lightgroups against the original beauty pass
 #All aov file sequences must be in the same folder
 #This currenty supports renders using Arnold's naming convention
 
-'''
-To install add this to your menu.py : 
 
+# To install add this to your menu.py : 
+
+'''
 import passbuilder
 TMmenu = nuke.menu('Nuke').addMenu('TM Tools')
 TMmenu.addCommand('Build Arnold QC Template', 'passbuilder.buildTemplate()')
-
 '''
+
+
+
+import os.path
+import PySide2
+import nuke
+import nukescripts.autobackdrop as abd
 
 
 app = PySide2.QtWidgets.QApplication.instance()

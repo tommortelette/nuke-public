@@ -5,6 +5,8 @@ __description__ = 'LUT Selector'
 
 #Select a node and run this in the script editor in Nuke to add the callback to the group
 
+# To install add this to your menu.py : 
+
 '''
 import lutselect
 reload(lutselect)

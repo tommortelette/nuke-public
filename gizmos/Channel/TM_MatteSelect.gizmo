@@ -1,53 +1,228 @@
 #! /Volumes/software/nuke/Nuke11.2v5/libnuke-11.2.5.so -nx
 version 11.2 v5
 Gizmo {
- help "Shuffles mattes from red green and blue channels into alpha"
- tile_color 0xf4cb1fff
- addUserKnob {20 rotoSelect l matteSelect}
- addUserKnob {6 redCh l "red channel" +STARTLINE}
- redCh true
- addUserKnob {6 greenCh l "green channel" +STARTLINE}
- greenCh true
- addUserKnob {6 blueCh l "blue channel" +STARTLINE}
- blueCh true
- addUserKnob {26 divider l "" +STARTLINE}
- addUserKnob {26 text_version l "" +STARTLINE T "<font color=#808080 size=\"5\" >v1.0</font>"}
- addUserKnob {26 text_author l "" +STARTLINE T "<font color=#808080 size=\"2\">Matte Select © 2019 Tom Mortelette</font>"}
+tile_color 0xf4cb1fff
+addUserKnob {20 matteSelect}
+addUserKnob {26 L01 l "L01 (rgb)"}
+addUserKnob {6 r1 l red +STARTLINE}
+r1 true
+addUserKnob {6 g1 l green +STARTLINE}
+g1 true
+addUserKnob {6 b1 l blue +STARTLINE}
+b1 true
+addUserKnob {6 a1 l alpha +INVISIBLE +STARTLINE}
+addUserKnob {20 additional l "additional layers" n 1}
+additional 0
+addUserKnob {22 enableAdditionalLayers l "enable all" T "n=nuke.thisNode()\nknobs = \['r2', 'g2', 'b2', 'r3', 'g3', 'b3', 'r4', 'g4', 'b4']\nfor k in knobs:\n    n\[k].setValue(1)" +STARTLINE}
+addUserKnob {22 disableAdditionaLayers l "disable all" -STARTLINE T "n=nuke.thisNode()\nknobs = \['r2', 'g2', 'b2', 'r3', 'g3', 'b3', 'r4', 'g4', 'b4']\nfor k in knobs:\n    n\[k].setValue(0)"}
+addUserKnob {26 L02}
+addUserKnob {6 r2 l red +STARTLINE}
+addUserKnob {6 g2 l green +STARTLINE}
+addUserKnob {6 b2 l blue +STARTLINE}
+addUserKnob {6 a2 +INVISIBLE +STARTLINE}
+addUserKnob {26 L03}
+addUserKnob {6 r3 l red -STARTLINE}
+addUserKnob {6 g3 l green +STARTLINE}
+addUserKnob {6 b3 l blue +STARTLINE}
+addUserKnob {6 a3 l alpha +INVISIBLE +STARTLINE}
+addUserKnob {26 L04}
+addUserKnob {6 r4 l red +STARTLINE}
+addUserKnob {6 g4 l green +STARTLINE}
+addUserKnob {6 b4 l blue +STARTLINE}
+addUserKnob {6 a4 l alpha +INVISIBLE +STARTLINE}
+addUserKnob {20 endGroup n -1}
+addUserKnob {26 divider1 l "" +STARTLINE}
+addUserKnob {22 wiki_roto l "Roto workflow" t "Have a look at the Roto Workflow on Union`s Wiki page. " T "import os\nimport sys\n\ntry:\n    import subprocess\n    def _run(cmd, shell, wait):\n        opener = subprocess.Popen(cmd, shell=shell)\n        if wait:\n            opener.wait()\n        return opener.pid\nexcept ImportError:\n    import popen2\n    def _run(cmd, shell, wait):\n        opener = popen2.Popen3(cmd)\n        if wait:\n            opener.wait()\n        return opener.pid\n\ndef _open(url, wait=0):\n    if sys.platform == \"darwin\":\n        cmd = \[\"open\", url]\n    elif hasattr(os, \"startfile\"):\n        return os.startfile(url)\n    elif os.environ.has_key(\"KDE_FULL_SESSION\") or os.environ.has_key(\"KDE_MULTIHEAD\") or \\\n        os.environ.has_key(\"GNOME_DESKTOP_SESSION_ID\") or os.environ.has_key(\"GNOME_KEYRING_SOCKET\"):\n        cmd = \[\"xdg-open\", url]\n    else:\n        raise OSError, \"Desktop not supported.\"\n\n    return _run(cmd, 0, wait)\n\n_open('https://sites.google.com/a/unionvfx.com/wiki/home/2d/roto/roto-workflow-wip')\n" +STARTLINE}
+addUserKnob {26 text_version l "" +STARTLINE T "<font color=#808080 size=\"5\" >v1.1</font>"}
+addUserKnob {26 text_author l "" +STARTLINE T "<font color=#808080 size=\"2\">Matte Select &copy; 2019 Tom Mortelette</font>"}
 }
- Input {
-  inputs 0
-  name InputMatte
-  xpos 510
-  ypos 1143
- }
- Expression {
-  temp_name0 R
-  temp_expr0 "redCh == 1 ? r : 0"
-  temp_name1 G
-  temp_expr1 "greenCh == 1 ? g : 0"
-  temp_name2 B
-  temp_expr2 "blueCh == 1 ? b : 0"
-  temp_name3 maxRG
-  temp_expr3 max(R,G,B)
-  channel0 rgb
-  expr0 0
-  channel1 alpha
-  expr1 maxRG
-  channel2 {-rgba.red -rgba.green -rgba.blue none}
-  channel3 {none none none -rgba.alpha}
-  name Expression1
-  selected true
-  xpos 510
-  ypos 1191
- }
- Clamp {
-  name Clamp2
-  xpos 510
-  ypos 1233
- }
- Output {
-  name Output1
-  xpos 510
-  ypos 1311
- }
+Input {
+inputs 0
+name InputMatte
+xpos 400
+ypos 1095
+}
+set N168af0f0 [stack 0]
+Dot {
+name Dot3
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 544
+ypos 1098
+}
+set N1b772940 [stack 0]
+Dot {
+name Dot2
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 654
+ypos 1098
+}
+set N1b774670 [stack 0]
+Dot {
+name Dot1
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 764
+ypos 1098
+}
+add_layer {L04 L04.red L04.green L04.blue L04.alpha}
+Shuffle {
+in L04
+name Shuffle3
+label "\[value in 1]"
+xpos 730
+ypos 1137
+}
+Expression {
+temp_name0 R
+temp_expr0 "r4 == 1 ? r : 0"
+temp_name1 G
+temp_expr1 "g4 == 1 ? g : 0"
+temp_name2 B
+temp_expr2 "b4 == 1 ? b : 0"
+temp_name3 A
+temp_expr3 "a4 == 1 ? a : 0"
+channel0 rgb
+expr0 0
+channel1 alpha
+expr1 max(R,G,B,A)
+channel2 {-rgba.red -rgba.green -rgba.blue none}
+channel3 {none none none -rgba.alpha}
+name L04
+selected true
+xpos 730
+ypos 1191
+}
+Dot {
+name Dot4
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 764
+ypos 1410
+}
+push $N1b774670
+add_layer {L03 L03.red L03.green L03.blue L03.alpha}
+Shuffle {
+in L03
+name Shuffle2
+label "\[value in 1]"
+xpos 620
+ypos 1137
+}
+Expression {
+temp_name0 R
+temp_expr0 "r3 == 1 ? r : 0"
+temp_name1 G
+temp_expr1 "g3 == 1 ? g : 0"
+temp_name2 B
+temp_expr2 "b3 == 1 ? b : 0"
+temp_name3 A
+temp_expr3 "a3 == 1 ? a : 0"
+channel0 rgb
+expr0 0
+channel1 alpha
+expr1 max(R,G,B,A)
+channel2 {-rgba.red -rgba.green -rgba.blue none}
+channel3 {none none none -rgba.alpha}
+name L03
+selected true
+xpos 620
+ypos 1191
+}
+Dot {
+name Dot5
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 654
+ypos 1338
+}
+push $N1b772940
+add_layer {L02 L02.red L02.green L02.blue L02.alpha}
+Shuffle {
+in L02
+name Shuffle1
+label "\[value in 1]"
+xpos 510
+ypos 1137
+}
+Expression {
+temp_name0 R
+temp_expr0 "r2 == 1 ? r : 0"
+temp_name1 G
+temp_expr1 "g2 == 1 ? g : 0"
+temp_name2 B
+temp_expr2 "b2 == 1 ? b : 0"
+temp_name3 A
+temp_expr3 "a2 == 1 ? a : 0"
+channel0 rgb
+expr0 0
+channel1 alpha
+expr1 max(R,G,B,A)
+channel2 {-rgba.red -rgba.green -rgba.blue none}
+channel3 {none none none -rgba.alpha}
+name L02
+selected true
+xpos 510
+ypos 1191
+}
+Dot {
+name Dot6
+note_font "Bitstream Vera Sans Bold Bold Bold Bold Bold Bold Bold Bold"
+note_font_size 21
+xpos 544
+ypos 1266
+}
+push $N168af0f0
+Expression {
+temp_name0 R
+temp_expr0 "r1 == 1 ? r : 0"
+temp_name1 G
+temp_expr1 "g1 == 1 ? g : 0"
+temp_name2 B
+temp_expr2 "b1 == 1 ? b : 0"
+temp_name3 A
+temp_expr3 "a1 == 1 ? b : 0"
+channel0 rgb
+expr0 0
+channel1 alpha
+expr1 max(R,G,B,A)
+channel2 {-rgba.red -rgba.green -rgba.blue none}
+channel3 {none none none -rgba.alpha}
+name L01
+selected true
+xpos 400
+ypos 1191
+}
+ChannelMerge {
+inputs 2
+name ChannelMerge1
+xpos 400
+ypos 1251
+disable {{!useLayers}}
+}
+ChannelMerge {
+inputs 2
+name ChannelMerge2
+xpos 400
+ypos 1323
+disable {{!useB}}
+}
+ChannelMerge {
+inputs 2
+name ChannelMerge3
+xpos 400
+ypos 1395
+disable {{!useC}}
+}
+Clamp {
+name Clamp2
+xpos 400
+ypos 1473
+}
+Output {
+name Output1
+xpos 400
+ypos 1551
+}
 end_group

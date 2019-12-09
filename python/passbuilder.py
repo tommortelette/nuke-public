@@ -39,7 +39,7 @@ def makeAOVPaths(aov_type):
         'lightgroups': arnold_lightgroups_aovs,
         'utility': arnold_utility_aovs,
         'crypto': arnold_crypto_aovs
-        }
+    }
     aov_paths = []
 
     if aov_type == 'beauty':
@@ -64,7 +64,8 @@ def deSelectAll():
             n['selected'].setValue(False)
 
 
-# makes backdrop and add nodes to list to set everything as selected at the end to allow moving around in teh DAG more easily
+# makes backdrop and add nodes to list to set everything as selected
+# at the end to allow moving around in teh DAG more easily
 def makeBackdrop(label):
     global createdNodes
     for n in nuke.selectedNodes():
@@ -109,8 +110,8 @@ def buildTemplate():
                 lighting_nodes.append(read)
             if len(lighting_nodes) >= 1:
                 # calculate average position of nodes to place the merge in the center
-                avgxpos = sum([n.xpos() for n in lighting_nodes])/len(lighting_nodes)
-                avgypos = sum([n.ypos() for n in lighting_nodes])/len(lighting_nodes)
+                avgxpos = sum([n.xpos() for n in lighting_nodes]) / len(lighting_nodes)
+                avgypos = sum([n.ypos() for n in lighting_nodes]) / len(lighting_nodes)
                 # create merge
                 lighting_merge = nuke.nodes.Merge2(
                     operation='plus',
@@ -139,8 +140,8 @@ def buildTemplate():
                 read.setSelected(True)
                 lightgroups_nodes.append(read)
             if len(lightgroups_nodes) >= 1:
-                avgxpos = sum([n.xpos() for n in lightgroups_nodes])/len(lightgroups_nodes)
-                avgypos = sum([n.ypos() for n in lightgroups_nodes])/len(lightgroups_nodes)
+                avgxpos = sum([n.xpos() for n in lightgroups_nodes]) / len(lightgroups_nodes)
+                avgypos = sum([n.ypos() for n in lightgroups_nodes]) / len(lightgroups_nodes)
                 lightgroups_merge = nuke.nodes.Merge2(
                     operation='plus',
                     output='rgb',
@@ -188,7 +189,7 @@ def buildTemplate():
             xpos=lighting_merge.xpos(),
             ypos=lighting_merge.ypos() + 400,
             label='[if {[numvalue this.which] == 0} {return "BEAUTY"}\nif {[numvalue this.which] == 1} {return "AOVs"}\nif {[numvalue this.which] == 2} {return Lightgroups}]'
-            )
+        )
         createdNodes.append(switch)
         # set everything to selected so the user can move the template more easily
         for n in createdNodes:
